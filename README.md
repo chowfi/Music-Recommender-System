@@ -184,7 +184,8 @@ To handle the cold-start users lacking demographic data in the dataset, we utili
 
 The results in Table 3 reveal that cold-start users generally exhibit lower performance compared to non-cold-start users in the validation set. This outcome is unsurprising as we possess a larger amount of training data for the non-cold-start users, while the cold-start users lack any available information.
 
-In contrast to the results observed in the validation set, the test set reveals that cold-start users outperformed non-cold-start users, as indicated in Table 4. Moreover, the cold-start model exhibited improved performance in the test set compared to the validation set. Collectively, these findings suggest that the cold-start model exhibits a certain degree of performance volatility when applied to unseen data. In practical applications, addressing the volatility in the cold-start
+In contrast to the results observed in the validation set, the test set reveals that cold-start users outperformed non-cold-start users, as indicated in Table 4. Moreover, the cold-start model exhibited improved performance in the test set compared to the validation set. Collectively, these findings suggest that the cold-start model exhibits a certain degree of performance volatility when applied to unseen data. In practical applications, addressing the volatility in the cold-start model's performance could be achieved through the strategic utilization of user demographics and active learning techniques.
+
 
 
 
