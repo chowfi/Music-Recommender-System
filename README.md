@@ -102,6 +102,38 @@ The relatively small values of MAP@100 in our recommendation system can be attri
 
 From Table 4, while the differences were not too big, the baseline popularity model fared worse on the test data than on the validation data for the non-cold-start users. This observation and the relatively low scores motivate the exploration of alternative models that can enhance performance and exhibit improved generalizability.
 
+## 5. LATENT FACTOR MODEL IMPLEMENTATION AND HYPERPARAMETER TUNING
+
+We implemented the Latent Factor Model by leveraging Spark's alternating least squares (ALS) method. The latent factor model is used in recommendation systems to capture underlying user-item relationships by representing them in a latent feature space. We first fit the model using the training dataset. After fitting the model, we used the function `recommendForUserSubset()` to make the top 100 recommendations. The recommendations were compared with the ground truth using MAP@100.
+
+Prior to hyperparameter tuning, we tried varying the 'maxIter' parameter. 'maxIter' refers to the maximum number of iterations that the algorithm will execute. If the algorithm reaches convergence before this number of iterations, it will stop; otherwise, it will stop after 'maxIter' iterations, regardless of whether convergence has been achieved. Based on the documentation from the Apache Spark website [2], ALS typically converges within 20 iterations. However, since 20 iterations took a long time to run on the cluster and did not provide a better MAP@100 score, we chose 15 as the value for 'maxIter' to ensure the model converges. Interestingly, we observed a slight decrease in MAP@100 as we increased 'maxIter' from 10 to 12 and from 12 to 15.
+
+To tune the hyperparameters, we ran through multiple iterations varying the 'rank', 'regParam', and 'alpha'. 'rank' is the number of latent factors in the model, representing the underlying tastes and preferences of the users in a recommendation system. 'regParam' specifies the regularization parameter in ALS, controlling the magnitude of user and item factors to prevent overfitting. 'alpha' is the degree of confidence in implicit preference observations.
+
+Due to limited resources, we adopted a one-parameter-at-a-time approach instead of an exhaustive grid search involving all possible combinations. We prioritized investigating the 'rank' parameter, as it determines the number of latent factors and is considered more critical. By exploring the rank value comprehensively, we aimed to identify the optimal setting. Conducting a grid search with multiple values for all three parameters might not have been feasible given the cluster's limitations.
+
+We experimented with varying the 'rank' parameter using regParam=1 and alpha=1, with values of 10, 50, 100, 150, and 200. Increasing the rank led to higher MAP@100 scores, indicating improved performance. Based on these findings, we narrowed our focus to rank values of 100, 150, and 200 and proceeded to tune the regParam. Table 5 displays the experimented rank and regParam values along with the corresponding MAP@100 results. Among the tested combinations, the model with rank=200 and regParam=0.5 achieved the best MAP@100 score of 0.02. Thus, we set the rank parameter to 200 and the regParam parameter to 0.5. If time permitted, further increasing the rank could have been explored, but due to longer execution times at rank=200, we concluded the hyperparameter tuning for rank at this value.
+
+**Table 5: Tuning for rank and regParam (alpha=1)**
+
+| rank | regParam | 0.1   | 0.5   | 0.8   | 1     |
+|------|----------|-------|-------|-------|-------|
+| 100  | 0.0118   | 0.0135| 0.0129| 0.0119|
+| 150  | 0.0143   | 0.0171| 0.0161| 0.0146|
+| 200  | 0.0165   | 0.0200| 0.0184| 0.0165|
+
+Table 6 demonstrates the values of alpha we tried and the resulting MAP scores while keeping the best rank and regParam constant. The best MAP@100 value is achieved with alpha 1.
+
+**Table 6: Tuning for alpha (rank=200, regParam=0.5)**
+
+| rank | regParam | alpha | MAP   |
+|------|----------|-------|-------|
+| 200  | 0.5      | 0.1   | 0.0054|
+| 200  | 0.5      | 0.5   | 0.0166|
+| 200  | 0.5      | 1     | 0.0200|
+| 200  | 0.5      | 10    | 0.0172|
+
+
 
 
 
