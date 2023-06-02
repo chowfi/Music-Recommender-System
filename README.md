@@ -133,6 +133,59 @@ Table 6 demonstrates the values of alpha we tried and the resulting MAP scores w
 | 200  | 0.5      | 1     | 0.0200|
 | 200  | 0.5      | 10    | 0.0172|
 
+## 6. LATENT FACTOR MODEL PERFORMANCE
+
+From the previous section, we achieved optimal performance with a rank of 200, regularization parameter of 0.5, and an alpha of 1. These parameters, identified through rigorous tuning, were then used to evaluate our model on unseen data - the test set. Key performance metrics, including precision and training time for both the validation and test sets, are detailed in Table 7. This analysis offers insights into the model's predictive accuracy and computational efficiency.
+
+| Metric       | Val    | Test   |
+|--------------|--------|--------|
+| MAP@100      | 0.0200 | 0.0171 |
+| Training time| 1190.00 s | 581.66 s |
+
+**Table 7: Latent Factor Model performance**
+
+We made some optimizations to our configuration between our validation and test runs out of necessity due to the volatility of the cluster, which resulted in improvements in the test time of the latent factor model as seen from Table 7.
+
+In summary, the validation and test performance of our latent factor model are very similar, indicating that our latent factor model generalizes well to unseen data. The latent factor model also outperforms the popularity baseline model on both the validation and test data by a large margin, as seen in Table 4, further validating that it is a more effective model in predicting the top 100 songs for users.
+
+## 7. EXTENSION: SINGLE MACHINE IMPLEMENTATION
+
+We implemented LightFM as the single machine implementation on the dataset. LightFM is a Python implementation of hybrid matrix factorization, using collaborative filtering and content-based filtering techniques. The model learns latent interactions for users and items and can incorporate metadata into the matrix factorization algorithm. [3]
+
+The 'Dataset' tool builds the interaction and feature matrices, creating mappings between user and song IDs. We fit the Dataset with a combined set of user and song IDs from both the train and test sets, as training requires all users and songs to belong to both datasets. The user-song interaction dataframe was then converted into a COO-matrix, a sparse matrix in the COOrdinate format, using the built-in 'build_interactions' method from the LightFM package. The model was trained on the training split with a WARP loss function on a single core.
+
+To compare the single-machine implementation, we evaluated MAP and efficiency, or the number of seconds elapsed recorded by the CPU:
+
+| Metric          | Val Small | Val Big   |
+|-----------------|-----------|-----------|
+| MAP@100         | 0.0289    | 0.0006    |
+| Training time   | 6.41 s    | 221 s     |
+
+**Table 8: LightFM performance**
+
+In comparison to ALS:
+
+| Metric          | Val Small | Val Big   |
+|-----------------|-----------|-----------|
+| MAP@100         | 0.0108    | 0.0200    |
+| Training time   | 564.82 s  | 1190.00 s |
+
+**Table 9: ALS performance**
+
+In terms of efficiency, we noticed that the training time for the LightFM model was significantly faster compared to the ALS model, regardless of the dataset size. Additionally, when evaluating the performance using MAP@100, LightFM achieved higher scores on the small dataset but lower scores on the large validation sets compared to the ALS model.
+
+## 8. EXTENSION: COLD-START USERS IMPLEMENTATION
+
+The second extension we chose to implement was the user cold-start problem. A user cold-start problem refers to the subset of users with no interaction history that enters the system. In other words, if there is a user in the test set that is not already in the training set, that user is a cold-start user.
+
+One decision we made was to evaluate the user cold-start problem as a separate group from the other users. This disaggregation allowed us to see how our cold-start problem fared on its own. This required us to split our train and validation sets to accommodate this decision. We have documented this in detail in the Train/Validation section.
+
+To handle the cold-start users lacking demographic data in the dataset, we utilized the baseline popularity model from the non-cold-start users. Subsequently, we assessed the performance of these users by evaluating their top 100 songs in their respective validation and test sets.
+
+The results in Table 3 reveal that cold-start users generally exhibit lower performance compared to non-cold-start users in the validation set. This outcome is unsurprising as we possess a larger amount of training data for the non-cold-start users, while the cold-start users lack any available information.
+
+In contrast to the results observed in the validation set, the test set reveals that cold-start users outperformed non-cold-start users, as indicated in Table 4. Moreover, the cold-start model exhibited improved performance in the test set compared to the validation set. Collectively, these findings suggest that the cold-start model exhibits a certain degree of performance volatility when applied to unseen data. In practical applications, addressing the volatility in the cold-start
+
 
 
 
