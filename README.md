@@ -66,13 +66,42 @@ Our popularity baseline model and latent factor model were developed using the u
 ## 3. POPULARITY BASELINE MODELS
 
 The formula we used for our popularity baseline model is given by:
-
-𝑃[𝑖] ← 𝑢 𝑅[𝑢, 𝑖]
-            |𝑅[:, 𝑖]| + 𝛽
+P[i] = 𝑢 𝑅[𝑢, 𝑖] / (|𝑅[:, 𝑖]| + 𝛽
 
 where P[i] is the popularity score for a specific track (i), R is a matrix of implicit ratings between users (u) and tracks (i), and 𝛽 is a damping constant to prevent extreme recommendation scores for items with very few distinct user ratings. In addition, we conditioned our model on there existing an interaction between the user and track.
 
 We will hyperparameter tune 𝛽.
+
+## 4. BASELINE MODEL PERFORMANCE
+
+To evaluate our model's performance, we opted for Mean Average Precision at K (MAP@K). MAP@K calculates the average precision at K for each user and then computes the mean across all users. This metric quantifies the fraction of relevant items present in the top K recommended items across the entire dataset. With K set to 100, we focused on evaluating the relevance of the top 100 songs recommended to each user. MAP@K is a widely recognized and reliable metric commonly used for assessing recommender systems. [4]
+
+We hyperparameter tuned 𝛽 from our popularity baseline model, and the results of tuning the damping factor 𝛽 are as follows in Table 3:
+
+| 𝛽      | Non-Cold-Start | Cold-Start |
+|---------|----------------|------------|
+| 1       | 6.74E-06       | 9.99E-06   |
+| 100     | 3.31E-05       | 1.23E-05   |
+| 1,000   | 2.47E-04       | 1.59E-04   |
+| 5,000   | 3.467E-04      | 2.17E-04   |
+| 10,000  | 3.58E-04       | 2.17E-04   |
+| 20,000  | 3.67E-04       | 2.20E-04   |
+| 100,000 | 3.76E-04       | 2.42E-04   |
+| 1,000,000 | 3.84E-04     | 2.46E-04   |
+
+**Table 3: MAP@100 Results of Beta hyperparameter tuning on the validation set**
+
+|            | Non-Cold-Start | Cold-Start |
+|------------|----------------|------------|
+| Validation | 3.467E-04      | 2.17E-04   |
+| Test       | 1.192E-04      | 4.618E-04  |
+
+**Table 4: MAP@100 Results of Baseline Popularity Model based on 𝛽 = 5,000**
+
+The relatively small values of MAP@100 in our recommendation system can be attributed to the challenge of suggesting 100 previously unheard songs that users may like. This task is inherently difficult as it requires accurate predictions for unfamiliar preferences. Additionally, we believe that our recommendation system might be better suited for an alternative evaluation metric such as Normalized Discounted Cumulative Gain (NDCG). Unlike MAP, NDCG places greater emphasis on the quality of the top-ranked tracks, aligning with how users typically engage with ranked lists. NDCG is less affected by the distribution of relevant items throughout the list.
+
+From Table 4, while the differences were not too big, the baseline popularity model fared worse on the test data than on the validation data for the non-cold-start users. This observation and the relatively low scores motivate the exploration of alternative models that can enhance performance and exhibit improved generalizability.
+
 
 
 
