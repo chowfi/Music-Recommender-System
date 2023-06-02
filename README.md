@@ -119,7 +119,7 @@ We conducted experiments using `regParam=1` and `alpha=1` while varying the `ran
 
 **Table 5: Tuning for rank and regParam (alpha=1)**
 
-| rank, regParam | 0.1   | 0.5   | 0.8   | 1     |
+| rank and regParam | 0.1   | 0.5   | 0.8   | 1     |
 |------|----------|-------|-------|-------|-------|
 | 100  | 0.0118   | 0.0135| 0.0129| 0.0119|
 | 150  | 0.0143   | 0.0171| 0.0161| 0.0146|
