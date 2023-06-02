@@ -4,11 +4,11 @@ This is a three-person group project of a collaborative filter music recommender
 
 The repo consists of :
 
-01_preprocessing.py. 
-02_train_val_split.py. 
-03_baseline_model.py. 
-04_latent_factor_model.py.  
-05_LightFM.ipynb. 
-06_Final_Report.pdf. 
+01_preprocessing.py <br>
+02_train_val_split.py <br>
+03_baseline_model.py <br>
+04_latent_factor_model.py <br>
+05_LightFM.ipynb <br>
+06_Final_Report.pdf <br>
 
 
