@@ -66,7 +66,7 @@ Our popularity baseline model and latent factor model were developed using the u
 ## 3. POPULARITY BASELINE MODELS
 
 The formula we used for our popularity baseline model is given by:
-P[i] = 𝑢 𝑅[𝑢, 𝑖] / (|𝑅[:, 𝑖]| + 𝛽
+P[i] ← (Σᵤ R[u,i]) / (|R[:,i]| + β)
 
 where P[i] is the popularity score for a specific track (i), R is a matrix of implicit ratings between users (u) and tracks (i), and 𝛽 is a damping constant to prevent extreme recommendation scores for items with very few distinct user ratings. In addition, we conditioned our model on there existing an interaction between the user and track.
 
